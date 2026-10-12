@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Unmix the signal: FastICA from scratch
 
 Blind audio source separation with Independent Component Analysis. Centering, PCA whitening (covariance + eigendecomposition) and FastICA are all implemented in NumPy. There is no library ICA or PCA.
@@ -64,6 +63,3 @@ This has no ground truth, so it writes `component_k.wav` files and a waveform pl
 ## Known gaps
 
 Real-world recordings and the mini-Shazam stretch goal are not done. Mixing is instantaneous only.
-=======
-# ica_unmix
->>>>>>> 20f8333be03edd89bcd801cae68919bfc04f5bc2
