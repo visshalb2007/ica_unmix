@@ -1,0 +1,37 @@
+[project]
+name = "ica-unmix"
+version = "1.0.0"
+description = "Blind audio source separation with FastICA from scratch (NumPy only)"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy==2.4.6",
+    "scipy==1.17.1",
+    "matplotlib==3.11.1",
+]
+license = {text = "MIT"}
+authors = [{name = "Visshal Balaji"}]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Multimedia :: Sound/Audio :: Analysis",
+]
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.pip-audit]
+# Scan only project dependencies, not the whole environment
+# Run: pip-audit -r requirements.txt
+# Or: pip install pip-audit && pip-audit
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"

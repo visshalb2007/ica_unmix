@@ -51,6 +51,13 @@ def main():
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--out", default=os.path.join(ROOT, "outputs"))
     args = ap.parse_args()
+
+    # Input validation
+    if args.mixtures_dir and not os.path.isdir(args.mixtures_dir):
+        ap.error(f"--mixtures-dir not found: {args.mixtures_dir}")
+    if not args.mixtures_dir and not os.path.isdir(args.sources_dir):
+        ap.error(f"--sources-dir not found: {args.sources_dir}")
+
     for sub in ["mixtures", "separated", "pca_only", "plots"]:
         os.makedirs(os.path.join(args.out, sub), exist_ok=True)
 
