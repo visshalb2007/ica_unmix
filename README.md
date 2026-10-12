@@ -39,14 +39,20 @@ outputs/             mixtures, separated audio, plots, metrics.json, experiments
 
 ## Run it
 
-```
+### Quick start (all platforms — sources already included)
+```bash
 pip install -r requirements.txt
-sudo apt install espeak-ng            # only needed for make_sources.py
-python scripts/make_sources.py        # skip if you use your own WAVs in data/sources/
-python scripts/run_ica.py             # about 1 s
-python scripts/experiments.py         # about 1-2 min
-python tests/test_core.py
+python scripts/run_ica.py             # about 1 s — mixes, separates, evaluates, exports audio + plots
+python scripts/experiments.py         # about 1-2 min — full experiment suite
+python tests/test_core.py             # unit tests
 ```
+
+### Regenerate sources (Linux/macOS only)
+```bash
+sudo apt install espeak-ng            # or: brew install espeak-ng
+python scripts/make_sources.py        # generates data/sources/*.wav
+```
+> **Windows:** `make_sources.py` requires `espeak-ng` which isn't available natively. The repo already includes the generated sources in `data/sources/`, so you can skip this step. Use WSL or provide your own WAVs.
 
 Options for `run_ica.py`: `--n-mix 4` (more mixtures than sources), `--algorithm deflation`, `--fun exp|cube|logcosh`, `--seed`.
 
