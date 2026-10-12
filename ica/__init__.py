@@ -1,10 +1,26 @@
 """From-scratch Independent Component Analysis for blind audio source separation."""
-from .preprocessing import center, pca_whiten
-from .fastica import fastica
-from .metrics import (match_sources, si_sdr, correlation_matrix,
-                      amari_index, excess_kurtosis, evaluate)
-from . import audio_io
 
-__all__ = ["center", "pca_whiten", "fastica", "match_sources", "si_sdr",
-           "correlation_matrix", "amari_index", "excess_kurtosis",
-           "evaluate", "audio_io"]
+from . import audio_io
+from .fastica import fastica
+from .metrics import (
+    amari_index,
+    correlation_matrix,
+    evaluate,
+    excess_kurtosis,
+    match_sources,
+    si_sdr,
+)
+from .preprocessing import center, pca_whiten
+
+__all__ = [
+    "amari_index",
+    "audio_io",
+    "center",
+    "correlation_matrix",
+    "evaluate",
+    "excess_kurtosis",
+    "fastica",
+    "match_sources",
+    "pca_whiten",
+    "si_sdr",
+]

@@ -5,39 +5,57 @@ Fixed-point update for one unit w on whitened data Z:
 followed by renormalisation. Deflation extracts units one at a time (Gram-Schmidt),
 symmetric estimates all units in parallel and decorrelates with W <- (W W^T)^{-1/2} W.
 """
+
+from collections.abc import Callable
+
 import numpy as np
+from numpy.typing import NDArray
+
+FloatArray = NDArray[np.floating]
 
 
 # Non-linearities g and their derivatives g'. Each approximates negentropy.
 #   logcosh : robust general purpose choice (good for most super-Gaussian sources)
 #   exp     : robust for highly super-Gaussian / outlier-heavy sources
 #   cube    : kurtosis-based, fastest but sensitive to outliers
-def _logcosh(y, a=1.0):
+def _logcosh(y: FloatArray, a: float = 1.0) -> tuple[FloatArray, FloatArray]:
     t = np.tanh(a * y)
-    return t, a * (1.0 - t ** 2)
+    return t, a * (1.0 - t**2)
 
 
-def _exp(y):
-    e = np.exp(-0.5 * y ** 2)
-    return y * e, (1.0 - y ** 2) * e
+def _exp(y: FloatArray) -> tuple[FloatArray, FloatArray]:
+    e = np.exp(-0.5 * y**2)
+    return y * e, (1.0 - y**2) * e
 
 
-def _cube(y):
-    return y ** 3, 3.0 * y ** 2
+def _cube(y: FloatArray) -> tuple[FloatArray, FloatArray]:
+    return y**3, 3.0 * y**2
 
 
-NONLINEARITIES = {"logcosh": _logcosh, "exp": _exp, "cube": _cube}
+NONLINEARITIES: dict[str, Callable[[FloatArray], tuple[FloatArray, FloatArray]]] = {
+    "logcosh": _logcosh,
+    "exp": _exp,
+    "cube": _cube,
+}
 
 
-def _sym_decorrelate(W):
+def _sym_decorrelate(W: FloatArray) -> FloatArray:
     """W <- (W W^T)^{-1/2} W using an eigendecomposition."""
     s, U = np.linalg.eigh(W @ W.T)
     s = np.maximum(s, 1e-12)
     return (U * (1.0 / np.sqrt(s))) @ U.T @ W
 
 
-def fastica(Z, n_components=None, algorithm="symmetric", fun="logcosh",
-            max_iter=500, tol=1e-6, seed=0, return_history=False):
+def fastica(
+    Z: FloatArray,
+    n_components: int | None = None,
+    algorithm: str = "symmetric",
+    fun: str = "logcosh",
+    max_iter: int = 500,
+    tol: float = 1e-6,
+    seed: int = 0,
+    return_history: bool = False,
+) -> tuple[FloatArray, FloatArray, int | list[int], list[float] | None]:
     """Run FastICA on whitened data.
 
     Parameters
@@ -57,11 +75,11 @@ def fastica(Z, n_components=None, algorithm="symmetric", fun="logcosh",
     m = n if n_components is None else n_components
     g = NONLINEARITIES[fun]
     rng = np.random.default_rng(seed)
-    history = []
+    history: list[float] = []
 
     if algorithm == "symmetric":
         W = _sym_decorrelate(rng.standard_normal((m, n)))
-        n_iter = max_iter
+        n_iter: int | list[int] = max_iter
         for it in range(1, max_iter + 1):
             Y = W @ Z
             gY, gpY = g(Y)
@@ -79,7 +97,7 @@ def fastica(Z, n_components=None, algorithm="symmetric", fun="logcosh",
         n_iter = []
         for p in range(m):
             w = rng.standard_normal(n)
-            w /= np.linalg.norm(w)
+            w /= float(np.linalg.norm(w))
             used = max_iter
             for it in range(1, max_iter + 1):
                 y = w @ Z
@@ -101,4 +119,4 @@ def fastica(Z, n_components=None, algorithm="symmetric", fun="logcosh",
     S = W @ Z
     if return_history:
         return W, S, n_iter, history
-    return W, S, n_iter
+    return W, S, n_iter, None

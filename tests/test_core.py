@@ -1,20 +1,25 @@
 """Sanity tests: python -m pytest tests  (or: python tests/test_core.py)"""
+
 import os
 import sys
 
 import numpy as np
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
-from ica import center, pca_whiten, fastica, evaluate, si_sdr  # noqa: E402
-from ica.pipeline import make_mixing_matrix, separate  # noqa: E402
+from ica import center, evaluate, pca_whiten, si_sdr
+from ica.pipeline import make_mixing_matrix, separate
 
 
 def _toy_sources(T=20000, seed=0):
     r = np.random.default_rng(seed)
     t = np.arange(T)
-    return np.vstack([np.sign(np.sin(2 * np.pi * 7e-4 * t)),            # square (sub-Gaussian)
-                      r.laplace(size=T),                                 # Laplace (super-Gaussian)
-                      (t * 3e-4) % 1.0 - 0.5])                           # sawtooth (sub-Gaussian)
+    return np.vstack(
+        [
+            np.sign(np.sin(2 * np.pi * 7e-4 * t)),  # square (sub-Gaussian)
+            r.laplace(size=T),  # Laplace (super-Gaussian)
+            (t * 3e-4) % 1.0 - 0.5,
+        ]
+    )  # sawtooth (sub-Gaussian)
 
 
 def test_centering():
@@ -56,7 +61,7 @@ def test_si_sdr_scale_invariant():
 
 def test_overdetermined_mixtures():
     S = _toy_sources()
-    X = make_mixing_matrix(5, 3) @ S          # 5 mixtures, 3 sources
+    X = make_mixing_matrix(5, 3) @ S  # 5 mixtures, 3 sources
     ev = evaluate(S, separate(X, 3)["S_ica"])
     assert ev["corr"].min() > 0.99
 
@@ -64,4 +69,5 @@ def test_overdetermined_mixtures():
 if __name__ == "__main__":
     for name, fn in list(globals().items()):
         if name.startswith("test_"):
-            fn(); print("ok", name)
+            fn()
+            print("ok", name)

@@ -1,8 +1,10 @@
 """Centering and PCA whitening, implemented with NumPy linear algebra only."""
+
 import numpy as np
+from numpy.typing import NDArray
 
 
-def center(X):
+def center(X: NDArray[np.floating]) -> tuple[NDArray[np.floating], NDArray[np.floating]]:
     """Subtract the per-channel mean.
 
     X : (channels, samples). Returns (X_centered, mean) where mean is (channels, 1).
@@ -11,7 +13,11 @@ def center(X):
     return X - mean, mean
 
 
-def pca_whiten(Xc, n_components=None, eps=1e-10):
+def pca_whiten(
+    Xc: NDArray[np.floating],
+    n_components: int | None = None,
+    eps: float = 1e-10,
+) -> tuple[NDArray[np.floating], NDArray[np.floating], NDArray[np.floating], NDArray[np.floating]]:
     """Whiten centered data with PCA via eigendecomposition of the covariance.
 
     Covariance  C = Xc Xc^T / (T-1) = E D E^T   (E orthogonal, D diagonal)
@@ -27,13 +33,13 @@ def pca_whiten(Xc, n_components=None, eps=1e-10):
     """
     n_ch, T = Xc.shape
     C = (Xc @ Xc.T) / (T - 1)
-    eigvals, E = np.linalg.eigh(C)            # ascending, C is symmetric
-    order = np.argsort(eigvals)[::-1]         # descending
+    eigvals, E = np.linalg.eigh(C)  # ascending, C is symmetric
+    order = np.argsort(eigvals)[::-1]  # descending
     eigvals, E = eigvals[order], E[:, order]
 
     k = n_ch if n_components is None else n_components
     d = np.maximum(eigvals[:k], eps)
-    K = (E[:, :k] / np.sqrt(d)).T             # D^{-1/2} E^T
-    K_inv = E[:, :k] * np.sqrt(d)             # E D^{1/2}
+    K = (E[:, :k] / np.sqrt(d)).T  # D^{-1/2} E^T
+    K_inv = E[:, :k] * np.sqrt(d)  # E D^{1/2}
     Z = K @ Xc
     return Z, K, K_inv, eigvals

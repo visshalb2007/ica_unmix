@@ -18,9 +18,17 @@ classifiers = [
     "Topic :: Multimedia :: Sound/Audio :: Analysis",
 ]
 
+[project.scripts]
+ica-unmix = "ica.cli:main"
+ica-experiments = "scripts.experiments:main"
+
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["ica*"]
 
 [tool.pip-audit]
 # Scan only project dependencies, not the whole environment

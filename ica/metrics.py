@@ -1,25 +1,29 @@
 """Evaluation that handles ICA's scale, sign and permutation ambiguities."""
+
 import numpy as np
+from numpy.typing import NDArray
 from scipy.optimize import linear_sum_assignment  # only used for source matching
 
+FloatArray = NDArray[np.floating]
 
-def excess_kurtosis(X):
+
+def excess_kurtosis(X: FloatArray) -> FloatArray:
     """Excess kurtosis per row (0 for a Gaussian)."""
     Xc = X - X.mean(axis=1, keepdims=True)
-    v = (Xc ** 2).mean(axis=1)
-    return (Xc ** 4).mean(axis=1) / v ** 2 - 3.0
+    v = (Xc**2).mean(axis=1)
+    return (Xc**4).mean(axis=1) / v**2 - 3.0
 
 
-def correlation_matrix(S_true, S_est):
+def correlation_matrix(S_true: FloatArray, S_est: FloatArray) -> FloatArray:
     """Pearson correlation, rows of S_true vs rows of S_est -> (N_true, N_est)."""
-    a = (S_true - S_true.mean(1, keepdims=True))
-    b = (S_est - S_est.mean(1, keepdims=True))
+    a = S_true - S_true.mean(1, keepdims=True)
+    b = S_est - S_est.mean(1, keepdims=True)
     a /= np.linalg.norm(a, axis=1, keepdims=True)
     b /= np.linalg.norm(b, axis=1, keepdims=True)
     return a @ b.T
 
 
-def match_sources(S_true, S_est):
+def match_sources(S_true: FloatArray, S_est: FloatArray) -> tuple[NDArray[np.intp], FloatArray]:
     """Resolve permutation and sign ambiguity.
 
     Finds the assignment of estimates to true sources that maximises total
@@ -34,7 +38,7 @@ def match_sources(S_true, S_est):
     return perm, signs
 
 
-def si_sdr(ref, est):
+def si_sdr(ref: FloatArray, est: FloatArray) -> float:
     """Scale-invariant SDR in dB (Le Roux et al. 2019).
 
     est is projected onto ref, so any rescaling of est does not change the score.
@@ -47,7 +51,7 @@ def si_sdr(ref, est):
     return 10.0 * np.log10(np.dot(target, target) / (np.dot(noise, noise) + 1e-20))
 
 
-def amari_index(P):
+def amari_index(P: FloatArray) -> float:
     """Amari performance index of the global matrix P = W_total @ A.
 
     0 means a perfect (scaled permutation) solution. Normalised to [0, 1].
@@ -59,7 +63,11 @@ def amari_index(P):
     return (r + c) / (2.0 * n * (n - 1)) if n > 1 else 0.0
 
 
-def evaluate(S_true, S_est, mixtures=None):
+def evaluate(
+    S_true: FloatArray,
+    S_est: FloatArray,
+    mixtures: FloatArray | None = None,
+) -> dict:
     """Full evaluation of estimates against ground truth sources.
 
     Returns dict with the matching, per-source |correlation|, per-source SI-SDR,

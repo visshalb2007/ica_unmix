@@ -7,6 +7,7 @@
 All are 16 kHz mono, 10 s. Replace them with your own recordings if you like:
 any three clean mono WAVs in data/sources/ will work.
 """
+
 import math
 import os
 import subprocess
@@ -17,7 +18,7 @@ import numpy as np
 from scipy.signal import butter, lfilter, resample_poly
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-from ica import audio_io  # noqa: E402
+from ica import audio_io
 
 SR, DUR = 16000, 10.0
 N = int(SR * DUR)
@@ -26,14 +27,17 @@ rng = np.random.default_rng(42)
 
 
 def make_speech():
-    text = ("Independent component analysis recovers hidden signals from mixtures. "
-            "Each microphone hears a blend of every speaker, yet the sources are "
-            "statistically independent, and that is the clue we exploit. "
-            "Whitening removes correlations, and a rotation finds the rest.")
+    text = (
+        "Independent component analysis recovers hidden signals from mixtures. "
+        "Each microphone hears a blend of every speaker, yet the sources are "
+        "statistically independent, and that is the clue we exploit. "
+        "Whitening removes correlations, and a rotation finds the rest."
+    )
     with tempfile.TemporaryDirectory() as d:
         wav = os.path.join(d, "s.wav")
-        subprocess.run(["espeak-ng", "-v", "en-us+m3", "-s", "150", "-p", "40",
-                        "-w", wav, text], check=True)
+        subprocess.run(
+            ["espeak-ng", "-v", "en-us+m3", "-s", "150", "-p", "40", "-w", wav, text], check=True
+        )
         sr, x = audio_io.read_wav(wav)
     g = math.gcd(SR, sr)
     x = resample_poly(x, SR // g, sr // g)
@@ -44,14 +48,14 @@ def make_speech():
 def make_music():
     bpm = 100
     beat = 60.0 / bpm
-    scale = [0, 2, 4, 7, 9]                      # C major pentatonic
+    scale = [0, 2, 4, 7, 9]  # C major pentatonic
     t_all = np.zeros(N)
 
     def note(freq, dur, harmonics=(1.0, 0.5, 0.33, 0.2, 0.12)):
         n = int(dur * SR)
         t = np.arange(n) / SR
         y = sum(a * np.sin(2 * np.pi * freq * (k + 1) * t) for k, a in enumerate(harmonics))
-        env = np.minimum(1, t / 0.01) * np.exp(-3.0 * t / dur)   # fast attack, decay
+        env = np.minimum(1, t / 0.01) * np.exp(-3.0 * t / dur)  # fast attack, decay
         return y * env
 
     # melody
@@ -84,7 +88,7 @@ def make_ambient():
     idx = rng.random(N) < 0.03
     drops[idx] = rng.exponential(1.0, idx.sum()) * rng.choice([-1, 1], idx.sum())
     b, a = butter(2, [1500 / (SR / 2), 6500 / (SR / 2)], btype="band")
-    drops = lfilter([1.0], [1.0, -np.exp(-1 / (0.002 * SR))], drops)   # ~2 ms splash decay
+    drops = lfilter([1.0], [1.0, -np.exp(-1 / (0.002 * SR))], drops)  # ~2 ms splash decay
     patter = lfilter(b, a, drops)
     # slow rumble, amplitude modulated
     b2, a2 = butter(2, 120 / (SR / 2), btype="low")
