@@ -1,3 +1,0 @@
-[console_scripts]
-ica-experiments = scripts.experiments:main
-ica-unmix = ica.cli:main
