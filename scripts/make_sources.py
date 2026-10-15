@@ -104,4 +104,4 @@ if __name__ == "__main__":
         x = x - x.mean()
         x = x / np.abs(x).max()
         audio_io.write_wav(os.path.join(OUT, f"{name}.wav"), x, SR)
-        print(f"wrote {name}.wav  ({len(x)/SR:.1f}s)")
+        print(f"wrote {name}.wav  ({len(x) / SR:.1f}s)")

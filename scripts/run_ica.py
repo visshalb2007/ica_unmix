@@ -85,7 +85,7 @@ def main():
             f"Mixing matrix A ({args.n_mix}x{n_src}), cond = {np.linalg.cond(A):.2f}\n{np.round(A, 3)}"
         )
         for k in range(X.shape[0]):
-            audio_io.write_wav(os.path.join(args.out, "mixtures", f"mixture_{k+1}.wav"), X[k], sr)
+            audio_io.write_wav(os.path.join(args.out, "mixtures", f"mixture_{k + 1}.wav"), X[k], sr)
 
     # -------------------------------------------------------------- separate
     res = separate(
@@ -105,11 +105,11 @@ def main():
     if S_true is None:
         for i in range(n_src):
             audio_io.write_wav(
-                os.path.join(args.out, "separated", f"component_{i+1}.wav"), S_ica[i], sr
+                os.path.join(args.out, "separated", f"component_{i + 1}.wav"), S_ica[i], sr
             )
         waveform_grid(
             list(X) + list(S_ica),
-            [f"mix {i+1}" for i in range(len(X))] + [f"ICA {i+1}" for i in range(n_src)],
+            [f"mix {i + 1}" for i in range(len(X))] + [f"ICA {i + 1}" for i in range(n_src)],
             sr,
             os.path.join(args.out, "plots", "waveforms.png"),
         )
@@ -158,7 +158,7 @@ def main():
     waveform_grid(
         list(S_true) + list(X) + list(ev_pca["aligned"]) + list(ev_ica["aligned"]),
         [f"src: {n}" for n in NAMES]
-        + [f"mix {i+1}" for i in range(len(X))]
+        + [f"mix {i + 1}" for i in range(len(X))]
         + [f"PCA: {n}" for n in NAMES]
         + [f"ICA: {n}" for n in NAMES],
         sr,
@@ -195,9 +195,9 @@ def main():
     for ax, (ttl, D, labels) in zip(
         axes,
         [
-            ("sources vs mixtures", X, [f"mix {k+1}" for k in range(len(X))]),
-            ("sources vs PCA comps", S_pca, [f"PC{k+1}" for k in range(n_src)]),
-            ("sources vs ICA comps", S_ica, [f"IC{k+1}" for k in range(n_src)]),
+            ("sources vs mixtures", X, [f"mix {k + 1}" for k in range(len(X))]),
+            ("sources vs PCA comps", S_pca, [f"PC{k + 1}" for k in range(n_src)]),
+            ("sources vs ICA comps", S_ica, [f"IC{k + 1}" for k in range(n_src)]),
         ],
     ):
         C = np.abs(correlation_matrix(S_true, D))

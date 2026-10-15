@@ -14,6 +14,7 @@
 
 *Blind audio source separation with PCA whitening and FastICA, hand-built in pure NumPy.*
 
+[![CI](https://github.com/visshalb2007/ica_unmix/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/visshalb2007/ica_unmix/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![NumPy](https://img.shields.io/badge/built%20with-NumPy-013243?logo=numpy&logoColor=white)](https://numpy.org/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
