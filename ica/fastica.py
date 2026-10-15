@@ -78,12 +78,12 @@ def fastica(
     history: list[float] = []
 
     if algorithm == "symmetric":
-        W = _sym_decorrelate(rng.standard_normal((m, n)))
+        W: FloatArray = _sym_decorrelate(rng.standard_normal((m, n)))
         n_iter: int | list[int] = max_iter
         for it in range(1, max_iter + 1):
             Y = W @ Z
             gY, gpY = g(Y)
-            W_new = (gY @ Z.T) / T - np.diag(gpY.mean(axis=1)) @ W
+            W_new: FloatArray = (gY @ Z.T) / T - np.diag(gpY.mean(axis=1)) @ W
             W_new = _sym_decorrelate(W_new)
             # converged when each new row is parallel (up to sign) to the old row
             delta = np.max(np.abs(np.abs(np.sum(W_new * W, axis=1)) - 1.0))
@@ -96,13 +96,13 @@ def fastica(
         W = np.zeros((m, n))
         n_iter = []
         for p in range(m):
-            w = rng.standard_normal(n)
-            w /= float(np.linalg.norm(w))
+            w: FloatArray = np.asarray(rng.standard_normal(n), dtype=np.float64)
+            w = w / np.linalg.norm(w)
             used = max_iter
             for it in range(1, max_iter + 1):
                 y = w @ Z
                 gy, gpy = g(y)
-                w_new = (Z * gy).mean(axis=1) - gpy.mean() * w
+                w_new: FloatArray = (Z * gy).mean(axis=1) - gpy.mean() * w
                 # Gram-Schmidt: remove projections on already found components
                 w_new -= W[:p].T @ (W[:p] @ w_new)
                 w_new /= np.linalg.norm(w_new)
