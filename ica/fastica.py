@@ -11,7 +11,7 @@ from collections.abc import Callable
 import numpy as np
 from numpy.typing import NDArray
 
-FloatArray = NDArray[np.floating]
+FloatArray = NDArray[np.float64]
 
 
 # Non-linearities g and their derivatives g'. Each approximates negentropy.

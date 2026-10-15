@@ -6,7 +6,7 @@ from numpy.typing import NDArray
 from .fastica import fastica
 from .preprocessing import center, pca_whiten
 
-FloatArray = NDArray[np.floating]
+FloatArray = NDArray[np.float64]
 
 
 def make_mixing_matrix(

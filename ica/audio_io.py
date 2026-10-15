@@ -6,7 +6,7 @@ import numpy as np
 from numpy.typing import NDArray
 from scipy.io import wavfile
 
-FloatArray = NDArray[np.floating]
+FloatArray = NDArray[np.float64]
 PathLike = str | os.PathLike
 
 

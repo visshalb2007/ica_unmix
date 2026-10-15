@@ -4,7 +4,7 @@ import numpy as np
 from numpy.typing import NDArray
 from scipy.optimize import linear_sum_assignment  # only used for source matching
 
-FloatArray = NDArray[np.floating]
+FloatArray = NDArray[np.float64]
 
 
 def excess_kurtosis(X: FloatArray) -> FloatArray:

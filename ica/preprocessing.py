@@ -3,8 +3,10 @@
 import numpy as np
 from numpy.typing import NDArray
 
+FloatArray = NDArray[np.float64]
 
-def center(X: NDArray[np.floating]) -> tuple[NDArray[np.floating], NDArray[np.floating]]:
+
+def center(X: FloatArray) -> tuple[FloatArray, FloatArray]:
     """Subtract the per-channel mean.
 
     X : (channels, samples). Returns (X_centered, mean) where mean is (channels, 1).
@@ -14,10 +16,10 @@ def center(X: NDArray[np.floating]) -> tuple[NDArray[np.floating], NDArray[np.fl
 
 
 def pca_whiten(
-    Xc: NDArray[np.floating],
+    Xc: FloatArray,
     n_components: int | None = None,
     eps: float = 1e-10,
-) -> tuple[NDArray[np.floating], NDArray[np.floating], NDArray[np.floating], NDArray[np.floating]]:
+) -> tuple[FloatArray, FloatArray, FloatArray, FloatArray]:
     """Whiten centered data with PCA via eigendecomposition of the covariance.
 
     Covariance  C = Xc Xc^T / (T-1) = E D E^T   (E orthogonal, D diagonal)
